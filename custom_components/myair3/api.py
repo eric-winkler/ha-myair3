@@ -60,14 +60,18 @@ class MyAir3ApiClient:
         text = await self._authenticated_request("/getSystemData")
         root = ET.fromstring(text)
 
+        system_el = root.find("system")
+        if system_el is None:
+            raise MyAir3ApiError("Missing system element in response")
+
         system_data = {
-            "name": root.findtext("name", ""),
-            "type": int(root.findtext("type", "0") or 0),
-            "my_app_rev": root.findtext("MyAppRev", ""),
-            "ip": root.findtext("ip", ""),
+            "name": system_el.findtext("name", ""),
+            "type": int(system_el.findtext("type", "0") or 0),
+            "my_app_rev": system_el.findtext("MyAppRev", ""),
+            "ip": system_el.findtext("ip", ""),
         }
 
-        uc = root.find("unitcontrol")
+        uc = system_el.find("unitcontrol")
         if uc is None:
             raise MyAir3ApiError("Missing unitcontrol in system data")
 

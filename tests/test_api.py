@@ -8,23 +8,29 @@ from custom_components.myair3.api import MyAir3ApiClient, MyAir3ApiError
 
 MOCK_IP = "192.168.1.100"
 
-SYSTEM_XML = """<system>
-  <type>103</type>
-  <name>Test Aircon</name>
-  <MyAppRev>2.0</MyAppRev>
-  <ip>192.168.1.100</ip>
-  <unitcontrol>
-    <airconOnOff>1</airconOnOff>
-    <fanSpeed>2</fanSpeed>
-    <mode>1</mode>
-    <centralActualTemp>24.0</centralActualTemp>
-    <centralDesiredTemp>22.0</centralDesiredTemp>
-    <numberOfZones>2</numberOfZones>
-    <maxUserTemp>32.0</maxUserTemp>
-    <minUserTemp>16.0</minUserTemp>
-    <airConErrorCode>0</airConErrorCode>
-  </unitcontrol>
-</system>"""
+SYSTEM_XML = """<?xml version="1.0" encoding="UTF-8" ?>
+<iZS10.3>
+  <request>getSystemData</request>
+  <mac>001ec0a3cf20</mac>
+  <authenticated>1</authenticated>
+  <system>
+    <type>103</type>
+    <name>Test Aircon</name>
+    <MyAppRev>2.0</MyAppRev>
+    <ip>192.168.1.100</ip>
+    <unitcontrol>
+      <airconOnOff>1</airconOnOff>
+      <fanSpeed>2</fanSpeed>
+      <mode>1</mode>
+      <centralActualTemp>24.0</centralActualTemp>
+      <centralDesiredTemp>22.0</centralDesiredTemp>
+      <numberOfZones>2</numberOfZones>
+      <maxUserTemp>32.0</maxUserTemp>
+      <minUserTemp>16.0</minUserTemp>
+      <airConErrorCode>0</airConErrorCode>
+    </unitcontrol>
+  </system>
+</iZS10.3>"""
 
 ZONE1_XML = """<aircon>
   <zone1>
