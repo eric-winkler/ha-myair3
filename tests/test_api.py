@@ -64,12 +64,12 @@ def _mock_session(*bodies):
 
 
 async def test_login_success():
-    client = MyAir3ApiClient(MOCK_IP, _mock_session(AUTH_SUCCESS_XML), password="pw")
+    client = MyAir3ApiClient(MOCK_IP, _mock_session(AUTH_SUCCESS_XML))
     await client._login()
 
 
 async def test_login_failure():
-    client = MyAir3ApiClient(MOCK_IP, _mock_session(AUTH_FAIL_XML), password="pw")
+    client = MyAir3ApiClient(MOCK_IP, _mock_session(AUTH_FAIL_XML))
     with pytest.raises(MyAir3ApiError, match="Login failed"):
         await client._login()
 
@@ -138,7 +138,6 @@ async def test_auto_login_on_auth_failure():
     client = MyAir3ApiClient(
         MOCK_IP,
         _mock_session(AUTH_FAIL_XML, AUTH_SUCCESS_XML, SYSTEM_XML, ZONE1_XML, ZONE2_XML),
-        password="testpass",
     )
     data = await client.get_system_data()
     assert data["system"]["name"] == "Test Aircon"
