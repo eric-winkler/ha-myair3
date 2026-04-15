@@ -144,7 +144,7 @@ class MyAir3Api:
 
         # Fetch all zone data concurrently
         zone_tasks = [
-            asyncio.ensure_future(self._get(f"getZoneData?zone={z}"))
+            asyncio.create_task(self._get(f"getZoneData?zone={z}"))
             for z in range(1, num_zones + 1)
         ]
         zone_roots = await asyncio.gather(*zone_tasks, return_exceptions=True)

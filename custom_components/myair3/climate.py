@@ -12,7 +12,7 @@ from homeassistant.components.climate import (
     ClimateEntityFeature,
     HVACMode,
 )
-from homeassistant.const import PRECISION_WHOLE, UnitOfTemperature
+from homeassistant.const import ATTR_TEMPERATURE, PRECISION_WHOLE, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -166,8 +166,6 @@ class MyAir3Climate(MyAir3Entity, ClimateEntity):
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set the target temperature."""
-        from homeassistant.const import ATTR_TEMPERATURE
-
         temp = kwargs.get(ATTR_TEMPERATURE)
         if temp is None:
             return
