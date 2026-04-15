@@ -19,12 +19,10 @@ class MyAir3ApiClient:
         self,
         ip: str,
         session: aiohttp.ClientSession,
-        password: str = "",
         timeout: int = DEFAULT_TIMEOUT,
     ) -> None:
         self._base_url = f"http://{ip}"
         self._session = session
-        self._password = password
         self._timeout = aiohttp.ClientTimeout(total=timeout)
 
     async def _request(self, path: str, **params) -> str:
@@ -41,7 +39,7 @@ class MyAir3ApiClient:
             raise MyAir3ApiError(f"Request timed out: {err}") from err
 
     async def _login(self) -> None:
-        text = await self._request("/login", password=self._password)
+        text = await self._request("/login", password="password")
         if "<authenticated>1</authenticated>" not in text:
             raise MyAir3ApiError("Login failed: invalid credentials")
 
