@@ -1,15 +1,10 @@
 """Tests for MyAir3 integration setup and teardown."""
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
-import pytest
-from homeassistant.const import CONF_IP_ADDRESS
-from homeassistant.helpers.update_coordinator import UpdateFailed
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.myair3.api import MyAir3ApiError
-from custom_components.myair3.const import DOMAIN, PLATFORMS
 
-from .conftest import MOCK_IP, MOCK_SYSTEM_DATA
+from .conftest import MOCK_SYSTEM_DATA
 
 
 async def test_setup_entry(hass, mock_config_entry, mock_client, enable_custom_integrations):

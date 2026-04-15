@@ -1,7 +1,6 @@
 """Tests for MyAir3 config flow."""
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
-import pytest
 from homeassistant import config_entries
 from homeassistant.const import CONF_IP_ADDRESS
 from homeassistant.data_entry_flow import FlowResultType

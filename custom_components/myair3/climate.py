@@ -13,7 +13,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
-    DOMAIN,
     FAN_MODE_TO_MYAIR3,
     HVAC_MODE_TO_MYAIR3,
     MYAIR3_TO_FAN_MODE,

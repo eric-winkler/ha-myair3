@@ -1,12 +1,11 @@
 """Tests for MyAir3 DataUpdateCoordinator."""
 from datetime import timedelta
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock
 
-import pytest
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from custom_components.myair3.api import MyAir3ApiError
-from custom_components.myair3.const import DOMAIN, UPDATE_INTERVAL_SECONDS
+from custom_components.myair3.const import UPDATE_INTERVAL_SECONDS
 from custom_components.myair3.coordinator import MyAir3Coordinator
 
 from .conftest import MOCK_SYSTEM_DATA

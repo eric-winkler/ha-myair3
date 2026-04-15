@@ -1,14 +1,11 @@
 """Tests for MyAir3 climate platform."""
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
 import pytest
 from homeassistant.components.climate import HVACMode
-from homeassistant.const import ATTR_TEMPERATURE, CONF_IP_ADDRESS
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from homeassistant.const import ATTR_TEMPERATURE
 
-from custom_components.myair3.const import DOMAIN
 
-from .conftest import MOCK_IP, MOCK_SYSTEM_DATA
 
 
 @pytest.fixture
@@ -24,7 +21,7 @@ async def setup_climate(hass, mock_config_entry, mock_client, enable_custom_inte
 
 async def test_climate_state_reporting(hass, setup_climate):
     """Test that climate entity reports correct state."""
-    state = hass.states.get(f"climate.test_aircon")
+    state = hass.states.get("climate.test_aircon")
     assert state is not None
     assert state.state == HVACMode.COOL
     assert state.attributes["current_temperature"] == 24.0

@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import MyAir3ApiClient
-from .const import DOMAIN, PLATFORMS
+from .const import PLATFORMS
 from .coordinator import MyAir3ConfigEntry, MyAir3Coordinator
 
 

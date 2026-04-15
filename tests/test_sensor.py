@@ -5,7 +5,6 @@ import pytest
 
 from custom_components.myair3.const import DOMAIN
 
-from .conftest import MOCK_IP, MOCK_SYSTEM_DATA
 
 
 @pytest.fixture
