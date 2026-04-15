@@ -43,7 +43,6 @@ async def test_zone2_damper_sensor(hass, setup_sensor):
 async def test_sensor_unique_ids(hass, mock_config_entry, setup_sensor):
     """Test that sensors have correct unique IDs."""
     entry_id = mock_config_entry.entry_id
-    er = hass.helpers.entity_registry if hasattr(hass, "helpers") else None
 
     from homeassistant.helpers import entity_registry as er_module
     registry = er_module.async_get(hass)

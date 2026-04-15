@@ -50,7 +50,7 @@ class MyAir3SystemClimate(MyAir3Entity, ClimateEntity):
     )
     _attr_name = None
 
-    def __init__(self, coordinator: MyAir3Coordinator, config_entry) -> None:
+    def __init__(self, coordinator: MyAir3Coordinator, config_entry: MyAir3ConfigEntry) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = config_entry.data[CONF_IP_ADDRESS]
 
