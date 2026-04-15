@@ -1,0 +1,56 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]"
+    },
+    "step": {
+      "user": {
+        "data": {
+          "host": "Host",
+          "port": "[%key:common::config_flow::data::port%]"
+        },
+        "description": "Enter the IP address and port of your MyAir3 controller.",
+        "title": "Connect to MyAir3"
+      }
+    }
+  },
+  "exceptions": {
+    "update_failed": {
+      "message": "An error occurred while updating from the MyAir3 controller: {error}"
+    }
+  },
+  "entity": {
+    "climate": {
+      "ac_unit": {
+        "name": "Air Conditioner"
+      }
+    },
+    "sensor": {
+      "central_actual_temp": {
+        "name": "Central Temperature"
+      },
+      "zone_actual_temp": {
+        "name": "Temperature"
+      },
+      "zone_desired_temp": {
+        "name": "Target Temperature"
+      }
+    },
+    "switch": {
+      "zone": {
+        "name": "Zone"
+      }
+    },
+    "binary_sensor": {
+      "zone_low_battery": {
+        "name": "Low Battery"
+      },
+      "zone_motor_error": {
+        "name": "Motor Error"
+      }
+    }
+  }
+}
