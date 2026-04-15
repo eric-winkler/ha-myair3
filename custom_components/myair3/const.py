@@ -3,7 +3,7 @@ from homeassistant.components.climate import HVACMode
 from homeassistant.const import Platform
 
 DOMAIN = "myair3"
-PLATFORMS = [Platform.CLIMATE, Platform.SENSOR]
+PLATFORMS = [Platform.CLIMATE, Platform.COVER, Platform.SENSOR]
 
 HVAC_MODE_TO_MYAIR3 = {
     HVACMode.COOL: 1,
