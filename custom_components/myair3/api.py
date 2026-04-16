@@ -135,6 +135,6 @@ class MyAir3ApiClient:
             "/setZoneData",
             zone=zone_number,
             zoneSetting=1 if enabled else 0,
-            userPercentSetting=damper_percent,
+            userPercentSetting=damper_percent if enabled else 100,
             name=name,
         )
