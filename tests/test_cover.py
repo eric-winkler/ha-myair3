@@ -1,5 +1,5 @@
 """Tests for MyAir3 cover platform."""
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from homeassistant.components.cover import ATTR_POSITION
@@ -200,3 +200,45 @@ async def test_cover_device_info(hass, mock_config_entry, setup_cover):
     assert zone_device.name == "Living Room"
     assert zone_device.manufacturer == "Advantage Air"
     assert zone_device.model == "MyAir3 Zone"
+
+
+async def test_optimistic_update_on_set_position(hass, mock_config_entry, setup_cover):
+    """Test that set_cover_position optimistically updates coordinator.data."""
+    coordinator = mock_config_entry.runtime_data
+    with patch.object(coordinator, "async_request_refresh", AsyncMock()):
+        await hass.services.async_call(
+            "cover",
+            "set_cover_position",
+            {"entity_id": "cover.living_room_damper", ATTR_POSITION: 60},
+            blocking=True,
+        )
+    assert coordinator.data["zones"][1]["damper_percent"] == 60
+    assert coordinator.data["zones"][1]["enabled"] is True
+
+
+async def test_optimistic_update_on_open_cover(hass, mock_config_entry, setup_cover):
+    """Test that open_cover optimistically updates coordinator.data."""
+    coordinator = mock_config_entry.runtime_data
+    with patch.object(coordinator, "async_request_refresh", AsyncMock()):
+        await hass.services.async_call(
+            "cover",
+            "open_cover",
+            {"entity_id": "cover.bedroom_damper"},
+            blocking=True,
+        )
+    assert coordinator.data["zones"][2]["damper_percent"] == 100
+    assert coordinator.data["zones"][2]["enabled"] is True
+
+
+async def test_optimistic_update_on_close_cover(hass, mock_config_entry, setup_cover):
+    """Test that close_cover optimistically updates coordinator.data."""
+    coordinator = mock_config_entry.runtime_data
+    with patch.object(coordinator, "async_request_refresh", AsyncMock()):
+        await hass.services.async_call(
+            "cover",
+            "close_cover",
+            {"entity_id": "cover.living_room_damper"},
+            blocking=True,
+        )
+    assert coordinator.data["zones"][1]["damper_percent"] == 0
+    assert coordinator.data["zones"][1]["enabled"] is False
