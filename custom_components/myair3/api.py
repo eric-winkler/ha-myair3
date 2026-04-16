@@ -96,12 +96,15 @@ class MyAir3ApiClient:
             zone_root = ET.fromstring(zone_text)
             zone_el = zone_root.find(f"zone{zone_num}")
             if zone_el is not None:
+                zone_setting = zone_el.findtext("setting", "0") == "1"
                 zones[zone_num] = {
                     "name": zone_el.findtext("name", f"Zone {zone_num}"),
-                    "enabled": zone_el.findtext("setting", "0") == "1",
+                    "enabled": zone_setting,
                     "damper_percent": int(
                         zone_el.findtext("userPercentSetting", "0") or 0
-                    ),
+                    )
+                    if zone_setting
+                    else 0,
                 }
             else:
                 zones[zone_num] = {

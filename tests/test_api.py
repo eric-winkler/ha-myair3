@@ -139,6 +139,32 @@ async def test_set_zone_data_sends_correct_params():
     assert params.get("name") == "Living Room"
 
 
+async def test_zone_setting_zero_overrides_user_percent():
+    """When zoneSetting=0, damper_percent must be 0 regardless of userPercentSetting."""
+    zone_with_setting_off_xml = """<aircon>
+  <zone1>
+    <name>Living Room</name>
+    <setting>0</setting>
+    <userPercentSetting>30</userPercentSetting>
+  </zone1>
+</aircon>"""
+    zone2_xml = """<aircon>
+  <zone2>
+    <name>Bedroom</name>
+    <setting>0</setting>
+    <userPercentSetting>0</userPercentSetting>
+  </zone2>
+</aircon>"""
+    client = MyAir3ApiClient(
+        MOCK_IP, _mock_session(SYSTEM_XML, zone_with_setting_off_xml, zone2_xml)
+    )
+    data = await client.get_system_data()
+    assert data["zones"][1]["enabled"] is False
+    assert data["zones"][1]["damper_percent"] == 0
+    assert data["zones"][2]["enabled"] is False
+    assert data["zones"][2]["damper_percent"] == 0
+
+
 async def test_auto_login_on_auth_failure():
     """When first request returns auth failure, retries after login."""
     client = MyAir3ApiClient(
