@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from homeassistant.components.cover import (
-    ATTR_TILT_POSITION,
+    ATTR_POSITION,
     CoverDeviceClass,
     CoverEntity,
     CoverEntityFeature,
@@ -37,9 +37,9 @@ class MyAir3ZoneDamper(MyAir3ZoneEntity, CoverEntity):
     _attr_device_class = CoverDeviceClass.DAMPER
     _attr_name = "Damper"
     _attr_supported_features = (
-        CoverEntityFeature.OPEN_TILT
-        | CoverEntityFeature.CLOSE_TILT
-        | CoverEntityFeature.SET_TILT_POSITION
+        CoverEntityFeature.OPEN
+        | CoverEntityFeature.CLOSE
+        | CoverEntityFeature.SET_POSITION
     )
 
     def __init__(self, coordinator: MyAir3Coordinator, zone_id: int) -> None:
@@ -50,7 +50,7 @@ class MyAir3ZoneDamper(MyAir3ZoneEntity, CoverEntity):
         )
 
     @property
-    def current_cover_tilt_position(self) -> int:
+    def current_cover_position(self) -> int:
         """Return the current damper position as a percentage 0–100."""
         return self.coordinator.data["zones"][self.zone_id]["damper_percent"]
 
@@ -59,17 +59,17 @@ class MyAir3ZoneDamper(MyAir3ZoneEntity, CoverEntity):
         """Return True if the damper is fully closed."""
         return self.coordinator.data["zones"][self.zone_id]["damper_percent"] == 0
 
-    async def async_open_cover_tilt(self, **kwargs: Any) -> None:
+    async def async_open_cover(self, **kwargs: Any) -> None:
         """Fully open the damper."""
         await self._set_damper(100)
 
-    async def async_close_cover_tilt(self, **kwargs: Any) -> None:
+    async def async_close_cover(self, **kwargs: Any) -> None:
         """Fully close the damper."""
         await self._set_damper(0)
 
-    async def async_set_cover_tilt_position(self, **kwargs: Any) -> None:
-        """Move the damper to a specific tilt position."""
-        await self._set_damper(kwargs[ATTR_TILT_POSITION])
+    async def async_set_cover_position(self, **kwargs: Any) -> None:
+        """Move the damper to a specific position."""
+        await self._set_damper(kwargs[ATTR_POSITION])
 
     async def _set_damper(self, percent: int) -> None:
         """Round to nearest 10 (half-up), send to API, and refresh."""

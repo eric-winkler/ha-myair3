@@ -2,7 +2,7 @@
 from unittest.mock import patch
 
 import pytest
-from homeassistant.components.cover import ATTR_TILT_POSITION
+from homeassistant.components.cover import ATTR_POSITION
 
 from custom_components.myair3.const import DOMAIN
 
@@ -24,18 +24,18 @@ async def test_cover_entities_created(hass, setup_cover):
     assert hass.states.get("cover.bedroom_damper") is not None
 
 
-async def test_zone1_tilt_position(hass, setup_cover):
-    """Test that zone 1 cover reports correct tilt position."""
+async def test_zone1_position(hass, setup_cover):
+    """Test that zone 1 cover reports correct position."""
     state = hass.states.get("cover.living_room_damper")
     assert state is not None
-    assert state.attributes["current_tilt_position"] == 80
+    assert state.attributes["current_position"] == 80
 
 
-async def test_zone2_tilt_position(hass, setup_cover):
-    """Test that zone 2 cover reports correct tilt position."""
+async def test_zone2_position(hass, setup_cover):
+    """Test that zone 2 cover reports correct position."""
     state = hass.states.get("cover.bedroom_damper")
     assert state is not None
-    assert state.attributes["current_tilt_position"] == 0
+    assert state.attributes["current_position"] == 0
 
 
 async def test_is_closed_when_damper_zero(hass, setup_cover):
@@ -52,12 +52,12 @@ async def test_is_open_when_damper_nonzero(hass, setup_cover):
     assert state.state == "open"
 
 
-async def test_open_cover_tilt(hass, setup_cover):
-    """Test that open_cover_tilt sets damper to 100%."""
+async def test_open_cover(hass, setup_cover):
+    """Test that open_cover sets damper to 100%."""
     client = setup_cover
     await hass.services.async_call(
         "cover",
-        "open_cover_tilt",
+        "open_cover",
         {"entity_id": "cover.living_room_damper"},
         blocking=True,
     )
@@ -69,12 +69,12 @@ async def test_open_cover_tilt(hass, setup_cover):
     )
 
 
-async def test_close_cover_tilt(hass, setup_cover):
-    """Test that close_cover_tilt sets damper to 0% and enabled=False."""
+async def test_close_cover(hass, setup_cover):
+    """Test that close_cover sets damper to 0% and enabled=False."""
     client = setup_cover
     await hass.services.async_call(
         "cover",
-        "close_cover_tilt",
+        "close_cover",
         {"entity_id": "cover.living_room_damper"},
         blocking=True,
     )
@@ -86,13 +86,13 @@ async def test_close_cover_tilt(hass, setup_cover):
     )
 
 
-async def test_set_tilt_position_exact_multiple_of_10(hass, setup_cover):
-    """Test set_cover_tilt_position with a value already a multiple of 10."""
+async def test_set_position_exact_multiple_of_10(hass, setup_cover):
+    """Test set_cover_position with a value already a multiple of 10."""
     client = setup_cover
     await hass.services.async_call(
         "cover",
-        "set_cover_tilt_position",
-        {"entity_id": "cover.living_room_damper", ATTR_TILT_POSITION: 80},
+        "set_cover_position",
+        {"entity_id": "cover.living_room_damper", ATTR_POSITION: 80},
         blocking=True,
     )
     client.set_zone_data.assert_called_with(
@@ -103,13 +103,13 @@ async def test_set_tilt_position_exact_multiple_of_10(hass, setup_cover):
     )
 
 
-async def test_set_tilt_position_rounds_up(hass, setup_cover):
-    """Test set_cover_tilt_position rounds 96 to 100."""
+async def test_set_position_rounds_up(hass, setup_cover):
+    """Test set_cover_position rounds 96 to 100."""
     client = setup_cover
     await hass.services.async_call(
         "cover",
-        "set_cover_tilt_position",
-        {"entity_id": "cover.living_room_damper", ATTR_TILT_POSITION: 96},
+        "set_cover_position",
+        {"entity_id": "cover.living_room_damper", ATTR_POSITION: 96},
         blocking=True,
     )
     client.set_zone_data.assert_called_with(
@@ -120,13 +120,13 @@ async def test_set_tilt_position_rounds_up(hass, setup_cover):
     )
 
 
-async def test_set_tilt_position_rounds_down(hass, setup_cover):
-    """Test set_cover_tilt_position rounds 84 to 80."""
+async def test_set_position_rounds_down(hass, setup_cover):
+    """Test set_cover_position rounds 84 to 80."""
     client = setup_cover
     await hass.services.async_call(
         "cover",
-        "set_cover_tilt_position",
-        {"entity_id": "cover.living_room_damper", ATTR_TILT_POSITION: 84},
+        "set_cover_position",
+        {"entity_id": "cover.living_room_damper", ATTR_POSITION: 84},
         blocking=True,
     )
     client.set_zone_data.assert_called_with(
@@ -137,13 +137,13 @@ async def test_set_tilt_position_rounds_down(hass, setup_cover):
     )
 
 
-async def test_set_tilt_position_rounds_half_up(hass, setup_cover):
-    """Test set_cover_tilt_position rounds 85 to 90."""
+async def test_set_position_rounds_half_up(hass, setup_cover):
+    """Test set_cover_position rounds 85 to 90."""
     client = setup_cover
     await hass.services.async_call(
         "cover",
-        "set_cover_tilt_position",
-        {"entity_id": "cover.living_room_damper", ATTR_TILT_POSITION: 85},
+        "set_cover_position",
+        {"entity_id": "cover.living_room_damper", ATTR_POSITION: 85},
         blocking=True,
     )
     client.set_zone_data.assert_called_with(
@@ -154,13 +154,13 @@ async def test_set_tilt_position_rounds_half_up(hass, setup_cover):
     )
 
 
-async def test_set_tilt_position_zero_disables(hass, setup_cover):
-    """Test set_cover_tilt_position with 0 sets enabled=False."""
+async def test_set_position_zero_disables(hass, setup_cover):
+    """Test set_cover_position with 0 sets enabled=False."""
     client = setup_cover
     await hass.services.async_call(
         "cover",
-        "set_cover_tilt_position",
-        {"entity_id": "cover.living_room_damper", ATTR_TILT_POSITION: 0},
+        "set_cover_position",
+        {"entity_id": "cover.living_room_damper", ATTR_POSITION: 0},
         blocking=True,
     )
     client.set_zone_data.assert_called_with(
