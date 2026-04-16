@@ -161,6 +161,8 @@ async def test_zone_setting_zero_overrides_user_percent():
     data = await client.get_system_data()
     assert data["zones"][1]["enabled"] is False
     assert data["zones"][1]["damper_percent"] == 0
+    assert data["zones"][2]["enabled"] is False
+    assert data["zones"][2]["damper_percent"] == 0
 
 
 async def test_auto_login_on_auth_failure():
