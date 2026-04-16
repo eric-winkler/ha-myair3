@@ -139,6 +139,20 @@ async def test_set_zone_data_sends_correct_params():
     assert params.get("name") == "Living Room"
 
 
+async def test_set_zone_data_disabled_sends_nonzero_user_percent():
+    """When closing (enabled=False), userPercentSetting must be 100 to avoid API rejection."""
+    session = _mock_session(SET_OK_XML)
+    client = MyAir3ApiClient(MOCK_IP, session)
+    await client.set_zone_data(zone_number=1, enabled=False, damper_percent=0, name="Living Room")
+    session.get.assert_called_once()
+    _, call_kwargs = session.get.call_args
+    params = call_kwargs.get("params", {})
+    assert params.get("zone") == 1
+    assert params.get("zoneSetting") == 0
+    assert params.get("userPercentSetting") == 100
+    assert params.get("name") == "Living Room"
+
+
 async def test_zone_setting_zero_overrides_user_percent():
     """When zoneSetting=0, damper_percent must be 0 regardless of userPercentSetting."""
     zone_with_setting_off_xml = """<aircon>
