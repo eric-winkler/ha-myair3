@@ -72,7 +72,7 @@ class MyAir3ZoneDamper(MyAir3ZoneEntity, CoverEntity):
         await self._set_damper(kwargs[ATTR_POSITION])
 
     async def _set_damper(self, percent: int) -> None:
-        """Round to nearest 10 (half-up), send to API, optimistically update, and refresh."""
+        """Round to nearest 10 (half-up), send to API, and optimistically update state."""
         rounded = int((percent + 5) // 10) * 10
         zone = self.coordinator.data["zones"][self.zone_id]
         await self.coordinator.client.set_zone_data(
@@ -83,4 +83,4 @@ class MyAir3ZoneDamper(MyAir3ZoneEntity, CoverEntity):
         )
         self.coordinator.data["zones"][self.zone_id]["damper_percent"] = rounded
         self.coordinator.data["zones"][self.zone_id]["enabled"] = rounded > 0
-        await self.coordinator.async_request_refresh()
+        self.async_write_ha_state()
