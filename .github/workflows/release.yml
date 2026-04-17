@@ -1,0 +1,154 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - custom_components/myair3/manifest.json
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check manifest version change
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          new_version="$(jq -r '.version' custom_components/myair3/manifest.json)"
+          before_sha="${{ github.event.before }}"
+
+          old_version=""
+          if [ -n "$before_sha" ] && [ "$before_sha" != "0000000000000000000000000000000000000000" ]; then
+            old_version="$(git show "${before_sha}:custom_components/myair3/manifest.json" 2>/dev/null | jq -r '.version' 2>/dev/null || true)"
+          fi
+
+          if [ -z "$new_version" ] || [ "$new_version" = "null" ]; then
+            echo "manifest version is empty; nothing to release"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "$old_version" = "$new_version" ]; then
+            echo "manifest version unchanged ($new_version); skipping release"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
+
+      - name: Build release notes from Conventional Commits
+        if: steps.version.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          new_version="${{ steps.version.outputs.new_version }}"
+          previous_tag="$(git tag --sort=-creatordate | grep -Fxv "$new_version" | head -n1 || true)"
+
+          if [ -n "$previous_tag" ]; then
+            range="${previous_tag}..${GITHUB_SHA}"
+          else
+            range="${GITHUB_SHA}"
+          fi
+
+          COMMIT_RANGE="$range" python - <<'PY'
+          import os
+          import re
+          import subprocess
+          from collections import defaultdict
+
+          commit_range = os.environ["COMMIT_RANGE"]
+          out = subprocess.check_output(
+              ["git", "log", "--pretty=format:%s", commit_range],
+              text=True,
+          )
+          subjects = [line.strip() for line in out.splitlines() if line.strip()]
+
+          order = [
+              ("feat", "Features"),
+              ("fix", "Bug Fixes"),
+              ("perf", "Performance"),
+              ("refactor", "Refactoring"),
+              ("docs", "Documentation"),
+              ("test", "Tests"),
+              ("build", "Build"),
+              ("ci", "CI"),
+              ("chore", "Chores"),
+              ("style", "Style"),
+          ]
+          grouped = defaultdict(list)
+          breaking = []
+          other = []
+
+          pattern = re.compile(r"^(?P<type>[a-z]+)(?:\([^)]+\))?(?P<bang>!)?: (?P<desc>.+)$")
+          for subject in subjects:
+              match = pattern.match(subject)
+              if not match:
+                  other.append(subject)
+                  continue
+
+              ctype = match.group("type").lower()
+              desc = match.group("desc").strip()
+              grouped[ctype].append(desc)
+              if match.group("bang"):
+                  breaking.append(desc)
+
+          lines = ["## What's Changed", ""]
+
+          has_sections = False
+          for ctype, title in order:
+              items = grouped.get(ctype, [])
+              if not items:
+                  continue
+              has_sections = True
+              lines.append(f"### {title}")
+              for item in items:
+                  lines.append(f"- {item}")
+              lines.append("")
+
+          if other:
+              has_sections = True
+              lines.append("### Other Changes")
+              for item in other:
+                  lines.append(f"- {item}")
+              lines.append("")
+
+          if breaking:
+              has_sections = True
+              lines.append("### ⚠️ Breaking Changes")
+              for item in breaking:
+                  lines.append(f"- {item}")
+              lines.append("")
+
+          if not has_sections:
+              lines.append("- No Conventional Commit messages found in this release range.")
+              lines.append("")
+
+          with open("RELEASE_NOTES.md", "w", encoding="utf-8") as f:
+              f.write("\n".join(lines))
+          PY
+
+      - name: Create or update release and tag
+        if: steps.version.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.new_version }}"
+
+          if gh release view "$version" >/dev/null 2>&1; then
+            gh release edit "$version" --title "$version" --notes-file RELEASE_NOTES.md
+          else
+            gh release create "$version" --title "$version" --notes-file RELEASE_NOTES.md --target "${GITHUB_SHA}"
+          fi
