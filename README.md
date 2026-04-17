@@ -2,6 +2,10 @@
 
 This integration exposes the aircon sensors and functions made available by Advantage Air MyAir3 controllers over http to Home Assistant.
 
+[![GitHub release](https://img.shields.io/github/release/eric-winkler/ha-myair3.svg)](https://github.com/eric-winkler/ha-myair3/releases/)
+![HACS Validation](https://github.com/eric-winkler/ha-myair3/actions/workflows/validate.yml/badge.svg)
+![Tests](https://github.com/eric-winkler/ha-myair3/actions/workflows/tests.yml/badge.svg)
+
 ## Screenshots
 
 ![Overall functionality](docs/images/myair3-screenshot.png)
