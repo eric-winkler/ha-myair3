@@ -1,0 +1,41 @@
+[changelog]
+header = ""
+body = """
+## What's Changed
+
+{% for group, commits in commits | group_by(attribute="group") %}\
+### {{ group }}
+
+{% for commit in commits %}\
+- {% if commit.scope %}**{{ commit.scope }}**: {% endif %}{{ commit.description | upper_first }}
+{% endfor %}
+
+{% endfor %}\
+{% set breaking = commits | filter(attribute="breaking", value=true) %}\
+{% if breaking | length > 0 %}\
+### ⚠️ Breaking Changes
+
+{% for commit in breaking %}\
+- {{ commit.description | upper_first }}
+{% endfor %}
+{% endif %}\
+"""
+footer = ""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = false
+commit_parsers = [
+  { message = "^feat", group = "Features" },
+  { message = "^fix", group = "Bug Fixes" },
+  { message = "^perf", group = "Performance" },
+  { message = "^refactor", group = "Refactoring" },
+  { message = "^docs", group = "Documentation" },
+  { message = "^test", group = "Tests" },
+  { message = "^build", group = "Build" },
+  { message = "^ci", group = "CI" },
+  { message = "^chore", group = "Chores" },
+  { message = "^style", group = "Style" },
+  { message = ".*", group = "Other Changes" },
+]
