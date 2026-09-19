@@ -6,8 +6,6 @@ from homeassistant.components.climate import HVACMode
 from homeassistant.const import ATTR_TEMPERATURE
 
 
-
-
 @pytest.fixture
 async def setup_climate(hass, mock_config_entry, mock_client, enable_custom_integrations):
     """Set up the climate platform for testing."""

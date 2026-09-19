@@ -193,6 +193,9 @@ async def test_cover_device_info(hass, mock_config_entry, setup_cover):
     device_registry = dr_module.async_get(hass)
 
     entry_id = mock_config_entry.entry_id
+    parent_device = device_registry.async_get_device(identifiers={(DOMAIN, entry_id)})
+    assert parent_device is not None
+
     zone_device = device_registry.async_get_device(
         identifiers={(DOMAIN, f"{entry_id}_zone_1")}
     )
@@ -200,6 +203,7 @@ async def test_cover_device_info(hass, mock_config_entry, setup_cover):
     assert zone_device.name == "Living Room"
     assert zone_device.manufacturer == "Advantage Air"
     assert zone_device.model == "MyAir3 Zone"
+    assert zone_device.via_device_id == parent_device.id
 
 
 async def test_optimistic_update_on_set_position(hass, mock_config_entry, setup_cover):

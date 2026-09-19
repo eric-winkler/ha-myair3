@@ -1,7 +1,6 @@
 """Tests for MyAir3 integration setup and teardown."""
 from unittest.mock import AsyncMock, patch
 
-
 from custom_components.myair3.api import MyAir3ApiError
 
 from .conftest import MOCK_SYSTEM_DATA
