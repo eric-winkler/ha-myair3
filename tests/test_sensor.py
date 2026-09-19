@@ -6,7 +6,6 @@ import pytest
 from custom_components.myair3.const import DOMAIN
 
 
-
 @pytest.fixture
 async def setup_sensor(hass, mock_config_entry, mock_client, enable_custom_integrations):
     """Set up the sensor platform for testing."""
