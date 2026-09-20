@@ -34,9 +34,7 @@ class MyAir3ZoneEntity(MyAir3Entity):
         entry = coordinator.config_entry
         device_registry = dr.async_get(coordinator.hass)
         parent_identifier = (DOMAIN, entry.entry_id)
-        parent_device = device_registry.async_get_device(
-            identifiers={parent_identifier}
-        )
+        parent_device = device_registry.async_get_device_by_identifier(parent_identifier)
         if parent_device is None:
             parent_device = device_registry.async_get_or_create(
                 config_entry_id=entry.entry_id,
