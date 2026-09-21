@@ -42,8 +42,7 @@ async def test_sensor_device_info(hass, mock_config_entry, setup_sensor):
     device_registry = dr_module.async_get(hass)
 
     entry_id = mock_config_entry.entry_id
-    devices = device_registry.async_get_devices(identifiers={(DOMAIN, entry_id)})
-    device = devices[0] if devices else None
+    device = device_registry.async_get_device(identifiers={(DOMAIN, entry_id)})
     assert device is not None
     assert device.name == "Test Aircon"
     assert device.manufacturer == "Advantage Air"
